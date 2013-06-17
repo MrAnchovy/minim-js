@@ -4,7 +4,8 @@ node_js:
   - "0.11"
   - "0.10"
   - "0.8"
-  - "0.6"
+# 0.6 seems to be broken with grunt so don't bother
+#  - "0.6"
 
 before_script:
   - npm install -g grunt-cli
