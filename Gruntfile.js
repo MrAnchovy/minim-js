@@ -60,9 +60,8 @@ module.exports = function(grunt) {
       
       build: {
         files: [
-          {
-            src:  'src/<%= pkg.name %>.js',
-            dest: 'build/<%= pkg.name %>.min.js'
+          { src:  'src/<%= pkg.name %>.js',
+            dest: 'build/<%= pkg.name %>.js'
           }
         ]
       }
