@@ -1,6 +1,6 @@
 
 
-describe("The core complex number module", function() {
+describe("Minim.classes.Complex - complex number class", function() {
 
     var Complex = Minim.classes.Complex;
 

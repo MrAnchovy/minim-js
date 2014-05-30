@@ -11,13 +11,6 @@
     "use strict";
 
     /**
-     * Static class for complex number operations.
-    **/
-    M.Complex = {
-        
-    };
-
-    /**
      * Constructor for complex number object.
      *
      * There is no validation on values provided to the constructor.
