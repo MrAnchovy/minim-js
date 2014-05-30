@@ -18,59 +18,35 @@
      * @param  {float|array}  Real part or an array [real part, imaginary part].
      * @param  {float}        Imaginary part.
     **/
-    M.classes.Complex = function (real, imaginary) {
-        var current;
+    M.classes.Complex = function (value) {
 
-        this.value = function (value) {
-            if (value === undefined) {
-                return current;
-            }
-            current = value;
-            return this;
-        };
-
-        if (real === undefined) {
-            current = [0, 0];
-        } else if (Array.isArray(real)) {
-            current = [real[0], real[1]];
-        } else {
-            current = [real, imaginary === undefined ? 0 : imaginary];
-        }
+        this.value = value;
 
     };
 
-    // set shortcuts to the class and prototype
-    var Cls   = M.classes.Complex;
-    var proto = M.classes.Complex.prototype;
+    // set shortcuts to the class and prototype and the related static class
+    var Cls     = M.classes.Complex;
+    var proto   = M.classes.Complex.prototype;
+    var Complex = M.Complex;
 
     proto.unsupported = function () {
         throw new Error(M.message("The requested function is not defined for $0.", M.message("complex numbers")));
     };
 
     proto.add = function (b) {
-        var a = this.value();
-        b = b.value();
-        return new Cls(a[0] + b[0], a[1] + b[1]);
+        return new Cls(Complex.add(this.value, b.value));
     };
 
     proto.subtract = function (b) {
-        var a = this.value();
-        b = b.value();
-        return new Cls(a[0] - b[0], a[1] - b[1]);
+        return new Cls(Complex.subtract(this.value, b.value));
     };
 
     proto.multiply = function (b) {
-        var a = this.value();
-        b = b.value();
-        return new Cls(a[0] * b[0] - a[1] * b[1], a[1] * b[0] + a[0] * b[1]);
+        return new Cls(Complex.multiply(this.value, b.value));
     };
 
     proto.divide = function (b) {
-        b = b.value();
-        var a = this.value(),
-        // the modulus of b squared |b^2|
-        modb2 = b[0] * b[0] + b[1] * b[1];
-        return new Cls((a[0] * b[0] + a[1] * b[1]) / modb2, (a[1] * b[0] - a[0] * b[1]) / modb2);
+        return new Cls(Complex.divide(this.value, b.value));
     };
 
     proto.div = proto.unsupported;
@@ -81,8 +57,8 @@
     proto.isEqualTo = proto.unsupported;
 
     proto.isNearlyEqualTo = function (b) {
-        var a = this.value();
-        b = b.value();
+        var a = this.value;
+        b = b.value;
         return M.almostEqual(a[0], b[0]) && M.almostEqual(a[1], b[1]);
     };
 
@@ -99,9 +75,7 @@
     };
 
     proto.squared = function (b) {
-        var a = this.value();
-        b = b.value();
-        return new Cls(a[0] * a[0] - a[1] * a[1], 2 * (a[0] * a[1]));
+        return new Cls(Complex.squared(this.value));
     };
 
     proto.sqrt = function () {
@@ -118,32 +92,34 @@
 
 
     proto.incrementBy = function (b) {
-        var a = this.value();
-        b = b.value();
-        this.value([a[0] + b[0], a[1] + b[1]]);
+        var a = this.value;
+        b = b.value;
+        a[0] += b[0];
+        a[1] += b[1];
         return this; // chainable
     };
 
     proto.decrementBy = function (b) {
-        var a = this.value();
-        b = b.value();
-        this.value([a[0] - b[0], a[1] - b[1]]);
+        var a = this.value;
+        b = b.value;
+        a[0] -= b[0];
+        a[1] -= b[1];
         return this; // chainable
     };
 
     proto.multiplyBy = function (b) {
-        var a = this.value();
-        b = b.value();
-        this.value([a[0] * b[0] - a[1] * b[1], a[1] * b[0] + a[0] * b[1]]);
+        var a = this.value;
+        b = b.value;
+        this.value = [a[0] * b[0] - a[1] * b[1], a[1] * b[0] + a[0] * b[1]];
         return this; // chainable
     };
 
     proto.divideBy = function (b) {
         b = b.value();
         var a = this.value(),
-        // the modulus of b squared |b^2|
-        modb2 = b[0] * b[0] + b[1] * b[1];
-        this.value([(a[0] * b[0] + a[1] * b[1]) / modb2, (a[1] * b[0] - a[0] * b[1]) / modb2]);
+            // the modulus of b squared |b^2|
+            modb2 = b[0] * b[0] + b[1] * b[1];
+        this.value = [(a[0] * b[0] + a[1] * b[1]) / modb2, (a[1] * b[0] - a[0] * b[1]) / modb2];
         return this; // chainable
     };
 
@@ -154,7 +130,7 @@
      * @return  {Complex}  A new object set to the conjugate of the current object's value.
     **/
     proto.conjugate = function () {
-        var a = this.value();
+        var a = this.value;
         return new Cls(a[0], -a[1]);
     };
 
@@ -164,7 +140,7 @@
      * @return  {float}  The real part of the current object's value.
     **/
     proto.real = function () {
-        var a = this.value();
+        var a = this.value;
         return a[0];
     };
 
@@ -174,7 +150,7 @@
      * @return  {float}  The imaginary part of the current object's value.
     **/
     proto.imaginary = function () {
-        var a = this.value();
+        var a = this.value;
         return a[1];
     };
 
@@ -184,7 +160,7 @@
      * @return  {float}  The square of the modulus of the current object's value.
     **/
     proto.modulusSquared = function () {
-        var a = this.value();
+        var a = this.value;
         return a[0] * a[0] + a[1] * a[1];
     };
 
@@ -194,7 +170,7 @@
      * @return  {float}  The modulus of the current object's value.
     **/
     proto.modulus = function () {
-        var a = this.value();
+        var a = this.value;
         return Math.sqrt(a[0] * a[0] + a[1] * a[1]);
     };
 
@@ -204,7 +180,7 @@
      * @return  {float}  The argument of the current object's value.
     **/
     proto.argument = function () {
-        var a = this.value();
+        var a = this.value;
         return Math.atan2(a[1], a[0]);
     };
 
@@ -213,8 +189,8 @@
      *
      * @return  {Array}  The current object's value in [modulus, argument] polar form.
     **/
-    proto.polar = function () {
-        var a = this.value();
+    proto.toPolar = function () {
+        var a = this.value;
         return [Math.sqrt(a[0] * a[0] + a[1] * a[1]), Math.atan2(a[1], a[0])];
     };
 

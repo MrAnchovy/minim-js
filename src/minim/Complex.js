@@ -162,8 +162,17 @@
      *
      * @return  {Array}  The current object's value in [modulus, argument] polar form.
     **/
-    Cls.polar = function (a) {
+    Cls.toPolar = function (a) {
         return [Math.sqrt(a[0] * a[0] + a[1] * a[1]), Math.atan2(a[1], a[0])];
     };
 
-})(Minim);
+    /**
+     * Get the rectangular form of a complex number provided in polar form.
+     *
+     * @return  {Array}  The current object's value in [modulus, argument] polar form.
+    **/
+    Cls.fromPolar = function (a) {
+        return [a[0] * cos(a[1]), a[0] * sin(a[1])];
+    };
+
+})(Minim || {});
