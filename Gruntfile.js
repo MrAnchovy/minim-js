@@ -27,6 +27,13 @@ module.exports = function(grunt) {
             // test minified files
             testMin : {
                 src : ["build/minim.min.js", "build/**/*.min.js"],
+            },
+            // test minified files quietly
+            travis : {
+                src : ["build/minim.min.js", "build/**/*.min.js"],
+                options : {
+                    display: "short"
+                }
             }
         },
 
@@ -71,6 +78,6 @@ module.exports = function(grunt) {
 
     grunt.registerTask("build", ["jshint", "clean:build", "concat:build", "jasmine:testConcat", "uglify", "jasmine:testMin"]);
 
-    grunt.registerTask("travis", ["jshint", "concat:build", "uglify", "jasmine:testMin"]);
+    grunt.registerTask("travis", ["jshint", "concat:build", "uglify", "jasmine:travis"]);
 
 };
