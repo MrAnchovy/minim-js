@@ -1,80 +1,76 @@
 module.exports = function(grunt) {
 
-  'use strict';
+    // Project configuration.
+    grunt.initConfig({
 
-  // Project configuration.
-  grunt.initConfig({
+        // import project settings from package.json
+        pkg: grunt.file.readJSON("package.json"),
 
-    // import project settings from package.json
-    pkg: grunt.file.readJSON('package.json'),
+        clean: {
+            build: { src: ["build"] }
+        },
 
-    jasmine : {
-      // test pre-build files in src/
-      testSrc : {
-        src : 'src/**/*.js',
-        options : {
-          specs : 'test/tests/**/*.js'
+        jasmine : {
+            // always include all the specs
+            options : {
+                // start with minim core, then do the rest - but don't do minim core twice!
+                specs : ["test/spec/minim.spec.js", ["test/spec/**/*.spec.js", "!test/spec/minim.spec.js"]]
+            },
+            // test pre-build files
+            testSrc : {
+                src : ["src/minim.js", "src/minim/**/*.js", "src/**/*.js"],
+            },
+            // test concatenated files
+            testConcat : {
+                src : ["build/minim.js", "build/**/*.js", "!build/**/*.min.js"],
+            },
+            // test minified files
+            testMin : {
+                src : ["build/minim.min.js", "build/**/*.min.js"],
+            }
+        },
+
+        jshint: {
+            // lint all source files
+            all: [ "src/**/*.js" ]
+        },
+
+        concat: {
+            build: { src: ["src/minim.js", "src/minim/**/*.js"], dest: "build/minim.js" }
+            // { src: ["src/BigInteger/BigInteger.js"],     dest: "build/minim-biginteger.js" }
+        },
+
+        uglify: {
+            build: {
+                files: [
+                    { src: ["build/minim.js"],            dest: "build/minim.min.js" },
+                    { src: ["build/minim-biginteger.js"], dest: "build/minim-biginteger.min.js" }
+                ]
+            },
+            options: {
+                banner: "/**\n"
+                    + " * <%= pkg.name %> <%= pkg.homepage %>\n"
+                    + " * \n"
+                    + " * <%= pkg.description %>\n"
+                    + " * \n"
+                    + " * @version     <%= pkg.version %> built <%= grunt.template.today(\"yyyy-mm-dd HH:mm:ss\") %>\n"
+                    + " * @copyright Copyright © 2013-<%= grunt.template.today(\"yyyy\") %> <%= pkg.author %>\n"
+                    + " * @license     <%= pkg.license %>\n"
+                    + "**/\n"
+            }
         }
-      },
-      // test files after build in build/
-      testBuild : {
-        src : 'build/**/*.js',
-        options : {
-          specs : 'test/tests/**/*.js'
-        }
-      }
-    },
-    jshint: {
-      all: [
-        // 'Gruntfile.js',
-        'src/**/*.js',
-        'test/tests/**/*.js'
-      ],
-      options: {
-      }
-    },
+    });
 
-  "name":        "minim",
-  "description": "Mathematics library for JavaScript",
+    grunt.loadNpmTasks("grunt-contrib-jasmine");
+    grunt.loadNpmTasks("grunt-contrib-jshint");
+    grunt.loadNpmTasks("grunt-contrib-uglify");
+    grunt.loadNpmTasks("grunt-contrib-concat");
+    grunt.loadNpmTasks("grunt-contrib-clean");
 
-  "version":     "0.0.0-unstable",
+    grunt.registerTask("test", ["jshint", "jasmine:testSrc"]);
 
-  "keywords":    [ "math", "maths", "BigInteger" ],
-  "homepage":    "http://www.minimmaths.org/",
-  "bugs":        "http://github.com/MrAnchovy/minim-js/issues",
-  "license":     "MIT",
-  "author":      "MrAnchovy (http://www.mranchovy.com/)",
-  "repository":  "https://github.com/MrAnchovy/minim-js",
+    grunt.registerTask("build", ["jshint", "clean:build", "concat:build", "jasmine:testConcat", "uglify", "jasmine:testMin"]);
 
-    uglify: {
-      options: {
-        banner: '/**\n'
-          + ' * <%= pkg.name %> <%= pkg.homepage %>\n'
-          + ' * <%= pkg.description %>\n'
-          + ' * \n'
-          + ' * @version   <%= pkg.version %> built <%= grunt.template.today("yyyy-mm-dd HH:mm:ss") %>\n'
-          + ' * @copyright Copyright © <%= grunt.template.today("yyyy") %> <%= pkg.author %>\n'
-          + ' * @license   <%= pkg.license %>\n'
-          + '**/\n'
-      },
-      
-      build: {
-        files: [
-          { src:  'src/<%= pkg.name %>.js',
-            dest: 'build/<%= pkg.name %>.js'
-          }
-        ]
-      }
-    }
-  });
-
-  grunt.loadNpmTasks('grunt-contrib-jasmine');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-
-  grunt.registerTask('test', ['jshint', 'jasmine:testSrc']);
-  grunt.registerTask('testBuild', ['jshint', 'jasmine:testBuild']);
-
-  grunt.registerTask('default', ['test', 'uglify', 'testBuild']);
+    grunt.registerTask("travis", ["jshint", "concat:build", "uglify", "jasmine:testMin"]);
 
 };
