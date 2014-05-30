@@ -42,7 +42,7 @@ var Minim = {
         RAD2DEG: 180 / Math.PI,
         /** The value of π/2. */
         PIOVER2: Math.PI / 2,
-        /** The maximum integer value in IEEE 754 (2^52 - 1). */
+        /** The maximum integer value in IEEE 754 (2^53 - 1). */
         MAXINT: 9007199254740992,
         /** The error in a single operation in IEEE 754. */
         EPSILON: 1 / 9007199254740991,
@@ -63,6 +63,25 @@ var Minim = {
             diff < Minim.ALMOSTZERO ||
             // test the relative difference
             diff < Math.max(Math.abs(a), Math.abs(b)) * Minim.ALMOSTEQUAL);
+    };
+
+
+    /**
+     * Test for a valid integer
+     *
+     * see http://phpjs.org/functions/is_int/
+     *
+     * @param mixed x the candidate to test
+     * @returns boolean true iff x is a valid integer
+    **/
+    M.isInteger = function (x) {
+        return (
+            x === +x    &&  // numerical strings etc.
+            isFinite(x) &&  // +/- infinity and NaN
+            // j shint doesn't like !(x % 1)     &&  // non-integers
+            x % 1 === 0 &&  // non-integers
+            Math.abs(x) <= M.MAXINT // cannot be held exactly
+        );
     };
 
     /** Modules should extend this property with any (public) classes. */
