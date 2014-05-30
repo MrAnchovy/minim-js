@@ -1,55 +1,35 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-  "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
-  <title>Minim core tests from src</title>
+<meta charset="UTF-8">
 
-  <link rel="stylesheet" type="text/css" href="../jasmine/jasmine.css">
-  <link rel="stylesheet" type="text/css" href="../local.css">
+<title>Minim core unit tests</title>
 
-  <script type="text/javascript" src="../jasmine/jasmine.js"></script>
-  <script type="text/javascript" src="../jasmine/jasmine-html.js"></script>
+<link rel="shortcut icon" type="image/png" href="../../vendor/jasmine/jasmine_favicon.png">
+<link rel="stylesheet"    type="text/css"  href="../../vendor/jasmine/jasmine.css">
 
-  <!-- include source files here... -->
-  <script type="text/javascript" src="../../src/minim.js"></script>
+<!-- Jasmine -->
+<script src="../../vendor/jasmine/jasmine.js"></script>
+<script src="../../vendor/jasmine/jasmine-html.js"></script>
+<script src="../../vendor/jasmine/boot.js"></script>
 
-  <!-- include spec files here... -->
-  <script type="text/javascript" src="../tests/minim.test.js"></script>
+<!-- Libraries -->
 
-  <script type="text/javascript">
-    (function() {
-      var jasmineEnv = jasmine.getEnv();
-      jasmineEnv.updateInterval = 1000;
 
-      var htmlReporter = new jasmine.HtmlReporter();
+<!-- Minim core -->
+<script src="../../src/minim.js"></script>
+<script src="../../src/minim/core.js"></script>
+<script src="../../src/minim/messages.js"></script>
 
-      jasmineEnv.addReporter(htmlReporter);
+<!-- Code under test -->
+<script src="../../src/minim/complex.js"></script>
 
-      jasmineEnv.specFilter = function(spec) {
-        return htmlReporter.specFilter(spec);
-      };
-
-      var currentWindowOnload = window.onload;
-
-      window.onload = function() {
-        if (currentWindowOnload) {
-          currentWindowOnload();
-        }
-        execJasmine();
-      };
-
-      function execJasmine() {
-        jasmineEnv.execute();
-      }
-
-    })();
-  </script>
+<!-- Test spec -->
+<script src="../spec/minim.spec.js"></script>
+<script src="../spec/minim-core.spec.js"></script>
+<script src="../spec/minim-complex.spec.js"></script>
 
 </head>
-
 <body>
-
-<h3>Minim core tests from src</h3>
-
 </body>
 </html>
